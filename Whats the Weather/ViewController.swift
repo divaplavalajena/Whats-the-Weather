@@ -16,7 +16,11 @@ class ViewController: UIViewController {
     
     @IBAction func findWeather(sender: AnyObject) {
         
-        let url = NSURL(string: "http://www.weather-forecast.com/locations/" + cityTextField.text! + "/forecasts/latest")!
+        var wasSuccessful = false
+        
+        let attemptedUrl = NSURL(string: "http://www.weather-forecast.com/locations/" + cityTextField.text!.stringByReplacingOccurrencesOfString(" ", withString: "-") + "/forecasts/latest")
+        
+        if let url = attemptedUrl {
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) -> Void in
             
@@ -28,13 +32,15 @@ class ViewController: UIViewController {
                 
                 let websiteArray = webContent!.componentsSeparatedByString("Weather Forecast Summary:</b><span class=\"read-more-small\"><span class=\"read-more-content\"> <span class=\"phrase\">")
                 
-                if websiteArray.count > 0 {
+                if websiteArray.count > 1 {
                     
                     let weatherArray = websiteArray[1].componentsSeparatedByString("</span>")
                     
                     //print(weatherArray[0])
                     
-                    if weatherArray.count > 0 {
+                    if weatherArray.count > 1 {
+                        
+                        wasSuccessful = true
                         
                         let weatherSummary = weatherArray[0].stringByReplacingOccurrencesOfString("&deg;", withString: "º")
                         
@@ -49,15 +55,25 @@ class ViewController: UIViewController {
                     }
                     
                 }
-                
-                
-                
-                
+
                 
             }
+            
+            if wasSuccessful == false {
+                
+                self.resultLabel.text = "Couldn't find the weather for that city - please try again."
+                
+            }
+            
         }
         
         task.resume()
+            
+        } else {
+            
+           self.resultLabel.text = "Couldn't find the weather for that city - please try again."
+            
+        }
         
     }
     
