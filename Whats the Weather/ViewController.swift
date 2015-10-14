@@ -16,7 +16,7 @@ class ViewController: UIViewController {
     
     @IBAction func findWeather(sender: AnyObject) {
         
-        let url = NSURL(string: "http://www.weather-forecast.com/locations/Paris/forecasts/latest")!
+        let url = NSURL(string: "http://www.weather-forecast.com/locations/" + cityTextField.text! + "/forecasts/latest")!
         
         let task = NSURLSession.sharedSession().dataTaskWithURL(url) { (data, response, error) -> Void in
             
